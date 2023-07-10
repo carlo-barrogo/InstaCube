@@ -9,7 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.4"
+    "@cubejs-client/core": "^0.33.12",
+    "@cubejs-client/vue": "^0.33.12",
+    "chart.js": "^4.3.0",
+    "chartjs-plugin-colorschemes": "^0.4.0",
+    "moment": "^2.29.4",
+    "vue": "^3.3.4",
+    "vue-chartjs": "^5.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
