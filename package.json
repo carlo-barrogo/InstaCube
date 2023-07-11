@@ -11,11 +11,13 @@
   "dependencies": {
     "@cubejs-client/core": "^0.33.12",
     "@cubejs-client/vue": "^0.33.12",
+    "bootstrap-icons": "^1.10.5",
     "chart.js": "^4.3.0",
     "chartjs-plugin-colorschemes": "^0.4.0",
     "moment": "^2.29.4",
     "vue": "^3.3.4",
-    "vue-chartjs": "^5.2.0"
+    "vue-chartjs": "^5.2.0",
+    "vue-router": "^4.2.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
