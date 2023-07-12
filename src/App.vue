@@ -9,6 +9,10 @@
           <span v-if="!isSidebarCollapsed" class="toggle-label">InstaCube</span>
         </button>
         <div class="sidebar-content">
+          <router-link to="/dashboard" class="sidebar-link">
+            <span class="link-icon"><i class="bi bi-grid-fill"></i></span>
+            <span v-if="!isSidebarCollapsed">Dashboard</span>
+          </router-link>
           <router-link to="/chartRenderer" class="sidebar-link">
             <span class="link-icon"><i class="bi bi-bar-chart-fill"></i></span>
             <span v-if="!isSidebarCollapsed">ChartRenderer</span>
@@ -46,6 +50,7 @@ export default {
 };
 </script>
 <style>
+@import './assets/fonts/Rubik/Rubik.css';
 .container {
   display: flex;
 }
@@ -129,6 +134,7 @@ export default {
 
 
 #app {
+  font-family: 'Rubik', Helvetica, Arial, sans-serif;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
