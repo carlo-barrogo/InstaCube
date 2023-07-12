@@ -53,6 +53,7 @@ export default {
 @import './assets/fonts/Rubik/Rubik.css';
 .container {
   display: flex;
+  min-height: 70vh;
 }
 
 .sidebar {
