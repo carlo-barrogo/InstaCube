@@ -11,7 +11,6 @@
 import { ref, onMounted, watch } from "vue";
 import cubejsApi from "../plugins/cube";
 import { Chart, registerables } from "chart.js";
-import moment from "moment";
 import { getLegendName, getRandomColor } from "../utils/chartUtils";
 Chart.register(...registerables);
 
@@ -50,7 +49,7 @@ export default {
         data: {
           labels: resultSet
             .chartPivot()
-            .map((row) => moment(row.x).format("MMM D YYYY")),
+            .map((row) => row.x),
           datasets: datasets,
         },
         options: {

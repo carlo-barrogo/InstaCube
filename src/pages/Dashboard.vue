@@ -1,10 +1,15 @@
 <template>
 	<h1>Dashboard</h1>
 	<div class="dashboard-container">
-		<Card :total="totalOrders" title="Total Availed Products"/>
-		<Card :total="totalPrice" title="Amount to be Paid (Pesos)"/>
-		<Card :total="totalUsers" title="Total Users"/>
+		<div class="cards-container">
+			<Card :total="totalOrders" title="Total Loan Amount"/>
+			<Card :total="totalPrice" title="Amount to be Paid (Pesos)"/>
+			<Card :total="totalUsers" title="Total Users"/>
+		</div>
 
+		<div class="loan-amount">
+			<LoanAmountChart />
+		</div>
 	</div>
 </template>
 
@@ -12,15 +17,15 @@
 	import { ref, onMounted } from "vue";
 	import cubejsApi from "../plugins/cube";
   import Card from "../components/Card.vue";
+	import LoanAmountChart from "../components/LoanAmountChart.vue";
 	
 	const totalOrders = ref(null);
 	const totalPrice = ref(null);
 	const totalUsers = ref(null);
 
-
 	onMounted(async () => {
 		const totalOrdersQuery = await cubejsApi.load({
-			measures: ["Orders.count"],
+			measures: ["loan.totalamount"],
 		});
 
 		totalOrders.value = totalOrdersQuery
@@ -38,8 +43,8 @@
 			.join(" ")
 
 
-	 const totalUsersQuery = await cubejsApi.load({
-	measures: ["Users.count"],
+		const totalUsersQuery = await cubejsApi.load({
+			measures: ["Users.count"],
 		});
 
 		totalUsers.value = totalUsersQuery
@@ -51,9 +56,16 @@
 </script>
 
 <style>
-	.dashboard-container {
+	.cards-container {
 		display: grid;
 		grid-template-columns: 2fr repeat(2, 1fr);
   	column-gap: 1rem;
+	}
+	
+	.loan-amount {
+		background-color: white;
+		border-radius: 4px;
+		padding: 24px;
+		margin-top: 40px;
 	}
 </style>
