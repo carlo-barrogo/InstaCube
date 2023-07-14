@@ -53,7 +53,8 @@ export default {
 @import './assets/fonts/Rubik/Rubik.css';
 .container {
   display: flex;
-  min-height: 70vh;
+  min-height: 80vh;
+  
 }
 
 .sidebar {
@@ -128,15 +129,15 @@ export default {
 .main-content {
   flex-grow: 1;
   padding: 20px;
-  background-color: #242424;
-  color: #ffffff;
+  background-color: #f4f4f4;
+  color: #17ad49;
   transition: margin-left 0.3s;
 }
 
 
 #app {
   font-family: 'Rubik', Helvetica, Arial, sans-serif;
-  max-width: 1280px;
+  max-width: 3080px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;

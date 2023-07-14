@@ -1,61 +1,64 @@
 <template>
-    <div>
-      <h2>Users Vs Orders</h2>
-      <div class="chart-container">
-        <canvas ref="chartCanvas"></canvas>
-      </div>
+  <div>
+    <h1>Users Vs Orders</h1>
+    <div class="chart-container">
+      <canvas ref="chartCanvas"></canvas>
     </div>
-  </template>
-  
-  <script>
-  import { ref, onMounted, watch } from "vue";
-  import cubejsApi from "../plugins/cube";
-  import { Chart, registerables } from "chart.js";
-  import moment from "moment";
-  import { getLegendName, getRandomColor } from "../utils/chartUtils";
+  </div>
+</template>
 
-  Chart.register(...registerables);
-  
-  export default {
-    setup() {
-      const chartCanvas = ref(null);
-      let chartInstance = null;
-  
-      onMounted(async () => {
-        const resultSet = await cubejsApi.load({
-          measures: ["Users.count","Orders.count"],
-          timeDimensions: [
+<script>
+import { ref, onMounted, watch } from "vue";
+import cubejsApi from "../plugins/cube";
+import { Chart, registerables } from "chart.js";
+import moment from "moment";
+import { getLegendName, getRandomColor } from "../utils/chartUtils";
+
+Chart.register(...registerables);
+
+export default {
+  setup() {
+    const chartCanvas = ref(null);
+    let chartInstance = null;
+
+    onMounted(async () => {
+      const resultSet = await cubejsApi.load({
+        order: {
+          "borrower.datecreated": "asc",
+        },
+        dimensions: ["borrower.firstname"],
+        measures: ["borrower.count", "loan.count"],
+        filters: [
           {
-            dimension: "LineItems.createdAt",
-            granularity: "month",
+            member: "company.companyname",
+            operator: "equals",
+            values: ["Company A"],
           },
         ],
-        
-        });
-        const measures = resultSet.pivotQuery().measures;
-        const datasets = measures.map((measure) => ({
-          label: getLegendName(measure),
-          data: resultSet.chartPivot().map((row) => row[measure]),
-          backgroundColor: getRandomColor(),
-        }));
-        const ctx = chartCanvas.value.getContext("2d");
-        chartInstance = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: resultSet.chartPivot().map((row) =>
-              moment(row.x).format("MMM D YYYY")
-            ),
-            datasets: datasets,
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
+      });
+      const measures = resultSet.pivotQuery().measures;
+      const datasets = measures.map((measure) => ({
+        label: getLegendName(measure),
+        data: resultSet.chartPivot().map((row) => row[measure]),
+        backgroundColor: getRandomColor(),
+      }));
+      const ctx = chartCanvas.value.getContext("2d");
+      chartInstance = new Chart(ctx, {
+        type: "bar",
+
+        data: {
+          labels: resultSet.chartPivot().map((row) => row.x),
+          datasets: datasets,
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
             },
           },
-        });
+        },
       });
+    });
     //   function getRandomColor() {
     //     const letters = "0123456789ABCDEF";
     //     let color = "#";
@@ -75,27 +78,29 @@
     //   }
     // }
 
-      watch(() => window.innerWidth, (width) => {
+    watch(
+      () => window.innerWidth,
+      (width) => {
         if (chartInstance) {
           const newWidth = width - 200; // Adjust this value based on the sidebar width
           chartInstance.resize(newWidth, chartInstance.height);
         }
-      });
-  
-      return {
-        chartCanvas,
-      };
-    },
-  };
-  </script>
-  
-  <style>
-  .chart-container {
-    height: 400px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  </style>
-  
+      }
+    );
+
+    return {
+      chartCanvas,
+    };
+  },
+};
+</script>
+
+<style>
+.chart-container {
+  height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

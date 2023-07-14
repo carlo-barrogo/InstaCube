@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Completed Product Orders</h2>
+    <h1>Completed Product Orders</h1>
     <div class="chart-container">
       <canvas ref="chartCanvas"></canvas>
     </div>
@@ -21,22 +21,23 @@ export default {
     let chartInstance = null;
 
     onMounted(async () => {
-      // const meta = await cubejsApi.meta();
-      // // const dimensions = await meta.members('Orders.username');
-        
-      //   console.log('Available Dimensions:', meta);
+      const meta = await cubejsApi.meta();
+      // const dimensions = await meta.members('Orders.username');
+
+        console.log('Available Dimensions:', meta);
       const resultSet = await cubejsApi.load({
-        measures: ["Orders.number"],
+        order: {
+          "loan.loanamount": "desc",
+        },
         timeDimensions: [
           {
-            dimension: "Orders.completedAt",
-            granularity: "month",
+            dimension: "loan.applicationdate",
           },
         ],
-
-    
-      
+        measures: ["loan.loanamount"],
+        dimensions: ["loan.reason"],
       });
+      
       const measures = resultSet.pivotQuery().measures;
       const datasets = measures.map((measure) => ({
         label: getLegendName(measure),
@@ -47,9 +48,9 @@ export default {
       chartInstance = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: resultSet.chartPivot().map((row) =>
-              moment(row.x).format("MMM D YYYY")
-            ),
+          labels: resultSet
+            .chartPivot()
+            .map((row) => moment(row.x).format("MMM D YYYY")),
           datasets: datasets,
         },
         options: {
@@ -73,17 +74,20 @@ export default {
     //   // Customize the legend name for each measure
     //   if (measure === "Orders.number") {
     //     return "Completed";
-    //   } 
+    //   }
     //   else {
     //     return measure; // Fallback to the original measure name
     //   }
     // }
-    watch(() => window.innerWidth, (width) => {
-      if (chartInstance) {
-        const newWidth = width - 200; // Adjust this value based on the sidebar width
-        chartInstance.resize(newWidth, chartInstance.height);
+    watch(
+      () => window.innerWidth,
+      (width) => {
+        if (chartInstance) {
+          const newWidth = width - 200; // Adjust this value based on the sidebar width
+          chartInstance.resize(newWidth, chartInstance.height);
+        }
       }
-    });
+    );
 
     return {
       chartCanvas,
@@ -99,5 +103,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+
+
 }
 </style>

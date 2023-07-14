@@ -1,7 +1,7 @@
 import cubejs from '@cubejs-client/core';
 
 const cubejsApi = cubejs(
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1OTQ2NjY4OTR9.0fdi5cuDZ2t3OSrPOMoc3B1_pwhnWj4ZmM3FHEX7Aus", 
-{ apiUrl: "https://awesome-ecom.gcp-us-central1.cubecloudapp.dev/cubejs-api/v1" });
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODkyOTg0MzUsImV4cCI6MTY4OTM4NDgzNX0.A2zdcr_OAn1XaStfkXska85CGac67nVvcFMLSqMW2oY", 
+{ apiUrl: 'http://localhost:4000/cubejs-api/v1' });
 
 export default cubejsApi;
