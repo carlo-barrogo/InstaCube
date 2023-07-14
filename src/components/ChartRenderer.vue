@@ -21,10 +21,10 @@ export default {
     let chartInstance = null;
 
     onMounted(async () => {
-      const meta = await cubejsApi.meta();
-      // const dimensions = await meta.members('Orders.username');
+      // const meta = await cubejsApi.meta();
+      // // const dimensions = await meta.members('Orders.username');
 
-        console.log('Available Dimensions:', meta);
+      //   console.log('Available Dimensions:', meta);
       const resultSet = await cubejsApi.load({
         order: {
           "loan.loanamount": "desc",
