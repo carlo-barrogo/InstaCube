@@ -1,14 +1,19 @@
 <template>
   <div>
     <h1>Users Vs Orders</h1>
+    <select v-model="selected">
+    <option disabled value="">Please select one</option>
+    <option value="Company A">A</option>
+    <option value="Company B">B</option>
+    <option value="Company C">C</option>
+  </select>
     <div class="chart-container">
       <canvas ref="chartCanvas"></canvas>
     </div>
   </div>
 </template>
-
 <script>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, watchEffect } from "vue";
 import cubejsApi from "../plugins/cube";
 import { Chart, registerables } from "chart.js";
 import moment from "moment";
@@ -20,8 +25,21 @@ export default {
   setup() {
     const chartCanvas = ref(null);
     let chartInstance = null;
+    const selected = ref('Company A');
+
+    watchEffect(() => {
+      // Only update the chart if a valid option is selected
+      if (selected.value !== '') {
+        updateChart(selected.value);
+      }
+    });
 
     onMounted(async () => {
+      // Load initial chart data with the default filter value
+      await updateChart(selected.value);
+    });
+
+    async function updateChart(selectedValue) {
       const resultSet = await cubejsApi.load({
         order: {
           "borrower.datecreated": "asc",
@@ -32,51 +50,46 @@ export default {
           {
             member: "company.companyname",
             operator: "equals",
-            values: ["Company A"],
+            values: [selectedValue],
           },
         ],
       });
-      const measures = resultSet.pivotQuery().measures;
-      const datasets = measures.map((measure) => ({
-        label: getLegendName(measure),
-        data: resultSet.chartPivot().map((row) => row[measure]),
-        backgroundColor: getRandomColor(),
-      }));
-      const ctx = chartCanvas.value.getContext("2d");
-      chartInstance = new Chart(ctx, {
-        type: "bar",
 
-        data: {
-          labels: resultSet.chartPivot().map((row) => row.x),
-          datasets: datasets,
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
+      if (chartInstance) {
+        // Update the chart data and labels
+        chartInstance.data.labels = resultSet.chartPivot().map((row) => row.x);
+        chartInstance.data.datasets = resultSet.pivotQuery().measures.map((measure) => ({
+          label: getLegendName(measure),
+          data: resultSet.chartPivot().map((row) => row[measure]),
+          backgroundColor: getRandomColor(),
+        }));
+
+        chartInstance.update(); // Update the chart with new data
+      } else {
+        // Create the chart instance for the first time
+        const measures = resultSet.pivotQuery().measures;
+        const datasets = measures.map((measure) => ({
+          label: getLegendName(measure),
+          data: resultSet.chartPivot().map((row) => row[measure]),
+          backgroundColor: getRandomColor(),
+        }));
+        const ctx = chartCanvas.value.getContext("2d");
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: resultSet.chartPivot().map((row) => row.x),
+            datasets: datasets,
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
             },
           },
-        },
-      });
-    });
-    //   function getRandomColor() {
-    //     const letters = "0123456789ABCDEF";
-    //     let color = "#";
-    //     for (let i = 0; i < 6; i++) {
-    //       color += letters[Math.floor(Math.random() * 16)];
-    //     }
-    //     return color;
-    //   }
-    //   function getLegendName(measure) {
-    //   // Customize the legend name for each measure
-    //   if (measure === "Users.count") {
-    //     return "Users";
-    //   } else if (measure === "Orders.count") {
-    //     return "Orders";
-    //   } else {
-    //     return measure; // Fallback to the original measure name
-    //   }
-    // }
+        });
+      }
+    }
 
     watch(
       () => window.innerWidth,
@@ -90,10 +103,12 @@ export default {
 
     return {
       chartCanvas,
+      selected
     };
   },
 };
 </script>
+
 
 <style>
 .chart-container {
