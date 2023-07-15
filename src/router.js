@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import ChartRenderer from './components/ChartRenderer.vue';
 import ChartRenderer2 from './components/ChartRenderer2.vue';
+import ChartRenderer3 from './components/ChartRenderer3.vue';
 import Dashboard from './pages/Dashboard.vue';
 import Card from './components/Card.vue';
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/chartRenderer2',
     name: 'chartRenderer2',
     component: ChartRenderer2
+  },
+  {
+    path: '/chartRenderer3',
+    name: 'chartRenderer3',
+    component: ChartRenderer3
   },
   {
     path: '/dashboard',

@@ -1,15 +1,15 @@
 <template>
   <div>
-    <h1>Payment Breakdown</h1>
+    <h1>Loans for this month</h1>
     <select v-model="selected">
       <option disabled value="">Please select one</option>
       <option value="Company A">A</option>
       <option value="Company B">B</option>
       <option value="Company C">C</option>
     </select>
-    <div class="chart-container">
+    <!-- <div class="chart-container">
       <canvas ref="chartCanvas"></canvas>
-    </div>
+    </div> -->
     <div class="table">
       <table>
         <thead>
@@ -19,8 +19,7 @@
             <th>Borrower Last Name</th>
             <th>Period</th>
             <th>Loan Amount</th>
-            <th>Convenience Fee</th>
-            <th>Total Amount</th>
+
             <!-- <th>Application Date</th> -->
           </tr>
         </thead>
@@ -34,8 +33,8 @@
             <td>{{ row["borrower.lastname"] }}</td>
             <td>{{ row["loan_payment.period"] }}</td>
             <td>{{ row["loan.loanamount"] }}</td>
-            <td>{{ row["loan.conveniencefee"] }}</td>
-            <td>{{ row["loan.totalamount"] }}</td>
+            <!-- <td>{{ row["loan.conveniencefee"] }}</td>
+            <td>{{ row["loan.totalamount"] }}</td> -->
             <!-- <td>{{ row['loan.applicationdate'] }}</td> -->
           </tr>
         </tbody>
@@ -47,90 +46,31 @@
 import { ref, onMounted, watch, watchEffect, reactive } from "vue";
 import cubejsApi from "../plugins/cube";
 import { Chart, registerables } from "chart.js";
-import moment from "moment";
-import { getLegendName, getRandomColor } from "../utils/chartUtils";
+
 
 Chart.register(...registerables);
 
 export default {
   setup() {
-    const chartCanvas = ref(null);
-    let chartInstance = null;
+  
     const selected = ref("Company A");
     const tableData = reactive([]);
 
     watchEffect(() => {
       // Only update the chart if a valid option is selected
       if (selected.value !== "") {
-        updateChart(selected.value);
+     
         updateTableData(selected.value);
       }
     });
 
     onMounted(async () => {
       // Load initial chart data with the default filter value
-      await updateChart(selected.value);
+
       await updateTableData(selected.value);
     });
 
-    async function updateChart(selectedValue) {
-      const resultSet = await cubejsApi.load({
-        order: {
-          "loan.count": "desc",
-        },
-        measures: ["loan.count"],
-        dimensions: [
-          // "loan_payment.loanpaymentstatus",
-          "loan_payment.datecreated",
-        ],
-        filters: [
-          {
-            member: "company.companyname",
-            operator: "equals",
-            values: [selectedValue],
-          },
-        ],
-      });
-      // console.log(resultSet.chartPivot().map((row) => row))
-      if (chartInstance) {
-        // Update the chart data and labels
-        chartInstance.data.labels = resultSet
-          .chartPivot()
-          .map((row) => moment(row.x).format("MMMM-DD-YYYY"));
-        chartInstance.data.datasets = resultSet
-          .pivotQuery()
-          .measures.map((measure) => ({
-            label: getLegendName(measure),
-            data: resultSet.chartPivot().map((row) => row[measure]),
-            backgroundColor: getRandomColor(),
-          }));
-
-        chartInstance.update(); // Update the chart with new data
-      } else {
-        // Create the chart instance for the first time
-        const measures = resultSet.pivotQuery().measures;
-        const datasets = measures.map((measure) => ({
-          label: getLegendName(measure),
-          data: resultSet.chartPivot().map((row) => row[measure]),
-          backgroundColor: getRandomColor(),
-        }));
-        const ctx = chartCanvas.value.getContext("2d");
-        chartInstance = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: resultSet.chartPivot().map((row) => row.x),
-            datasets: datasets,
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          },
-        });
-      }
-    }
+   
     async function updateTableData(selectedValue) {
       const resultSet = await cubejsApi.load({
         order: {
@@ -147,30 +87,30 @@ export default {
             member: "company.companyname",
             operator: "equals",
             values: [selectedValue],
+
+          },
+          {
+            member: "loan_payment.loanpaymentstatus",
+            operator: "equals",
+            values: ["Pending", "Deferred"],
           },
         ],
-        measures: [
-          "loan.loanamount",
-          "loan.conveniencefee",
-          "loan.totalamount",
+        measures: ["loan.loanamount"],
+        timeDimensions: [
+          {
+            dimension: "loan_payment.duedate",
+            dateRange: "This month",
+          },
         ],
 
       });
 
       tableData.splice(0, tableData.length, ...resultSet.tablePivot());
     }
-    watch(
-      () => window.innerWidth,
-      (width) => {
-        if (chartInstance) {
-          const newWidth = width - 200; // Adjust this value based on the sidebar width
-          chartInstance.resize(newWidth, chartInstance.height);
-        }
-      }
-    );
+
 
     return {
-      chartCanvas,
+
       selected,
       tableData,
     };

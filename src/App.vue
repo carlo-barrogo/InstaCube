@@ -4,9 +4,10 @@
       <div class="sidebar">
         <button class="toggle-button" @click="toggleSidebar">
           <span class="toggle-icon">
-            <i class="bi" :class="[isSidebarCollapsed ? 'bi-list' : '']"></i>
+            <img v-if="isSidebarCollapsed" class="imageCollapse" src="./assets/logo.png"/>
+      
           </span>
-          <span v-if="!isSidebarCollapsed" class="toggle-label">InstaCube</span>
+          <span v-if="!isSidebarCollapsed" class="toggle-label"> <img class="imgLogo" src="./assets/logo.png"/> InstaCube</span>
         </button>
         <div class="sidebar-content">
           <router-link to="/dashboard" class="sidebar-link">
@@ -18,8 +19,12 @@
             <span v-if="!isSidebarCollapsed">ChartRenderer</span>
           </router-link>
           <router-link to="/chartRenderer2" class="sidebar-link">
-            <span class="link-icon"><i class="bi bi-bezier2"></i></span>
-            <span v-if="!isSidebarCollapsed">ChartRenderer2</span>
+            <span class="link-icon"><i class="bi bi-cash-coin"></i></span>
+            <span v-if="!isSidebarCollapsed">Payments</span>
+          </router-link>
+          <router-link to="/chartRenderer3" class="sidebar-link">
+            <span class="link-icon"><i class="bi bi-wallet-fill"></i></span>
+            <span v-if="!isSidebarCollapsed">Loans</span>
           </router-link>
           <!-- Add more links as needed -->
         </div>
@@ -71,18 +76,21 @@ export default {
 
 .toggle-button {
   display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 10px;
-  background-color: #333333;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #ffffff;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 7px;
+    margin-left: 10px;
+    background-color: #333333;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffffff;
+    flex-direction: row-reverse;
 }
 
 .toggle-icon {
@@ -91,12 +99,27 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+
+
+}
+.imgLogo{
+  
+    height: 30px;
+    width: 25px;
+  
+}
+.imageCollapse{
+  height: 35px;
+  width: 30px;
 }
 
 .toggle-label {
   flex-grow: 1;
-  display: flex;
-  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
 }
 
 .sidebar-content {
@@ -107,7 +130,7 @@ export default {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   color: #ffffff;
   border: none;
   cursor: pointer;
@@ -118,7 +141,9 @@ export default {
   text-overflow: ellipsis;
   text-decoration: none;
 }
-
+.sidebar-link span:nth-child(2){
+  margin-left: 10px;
+}
 .link-icon {
   width: 20px;
   display: flex;
@@ -129,6 +154,7 @@ export default {
 .main-content {
   flex-grow: 1;
   padding: 20px;
+  height: auto;
   background-color: #f4f4f4;
   color: #17ad49;
   transition: margin-left 0.3s;
