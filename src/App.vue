@@ -16,7 +16,7 @@
           </router-link>
           <router-link to="/chartRenderer" class="sidebar-link">
             <span class="link-icon"><i class="bi bi-bar-chart-fill"></i></span>
-            <span v-if="!isSidebarCollapsed">ChartRenderer</span>
+            <span v-if="!isSidebarCollapsed">Applications</span>
           </router-link>
           <router-link to="/chartRenderer2" class="sidebar-link">
             <span class="link-icon"><i class="bi bi-cash-coin"></i></span>

@@ -78,11 +78,6 @@ export default {
         order: {
           "loan.count": "desc",
         },
-        measures: ["loan.count"],
-        dimensions: [
-          // "loan_payment.loanpaymentstatus",
-          "loan_payment.datecreated",
-        ],
         filters: [
           {
             member: "company.companyname",
@@ -90,18 +85,33 @@ export default {
             values: [selectedValue],
           },
         ],
+        measures: ["loan.count"],
+        timeDimensions: [
+          {
+            dimension: "loan_payment.datecreated",
+            granularity: "week",
+            dateRange: "This month",
+          },
+        ],
+        dimensions: ["loan.loanstatus"],
       });
-      // console.log(resultSet.chartPivot().map((row) => row))
+
+      const status =resultSet.loadResponses[0].data.filter(
+        (obj, index, f) =>
+          f.findIndex(
+            (item) => item[`loan.loanstatus`] === obj[`loan.loanstatus`]
+          ) === index
+      )
+    
       if (chartInstance) {
         // Update the chart data and labels
         chartInstance.data.labels = resultSet
           .chartPivot()
           .map((row) => moment(row.x).format("MMMM-DD-YYYY"));
-        chartInstance.data.datasets = resultSet
-          .pivotQuery()
-          .measures.map((measure) => ({
-            label: getLegendName(measure),
-            data: resultSet.chartPivot().map((row) => row[measure]),
+        chartInstance.data.datasets = status.map((measure) => ({
+            label: getLegendName(measure[`loan.loanstatus`]),
+            data: resultSet
+          .chartPivot().map((row)=> row[`${measure[`loan.loanstatus`]},loan.count`]),
             backgroundColor: getRandomColor(),
           }));
 
@@ -154,7 +164,6 @@ export default {
           "loan.conveniencefee",
           "loan.totalamount",
         ],
-
       });
 
       tableData.splice(0, tableData.length, ...resultSet.tablePivot());

@@ -18,11 +18,14 @@ export function getLegendName(measure) {
 }
 
 export function getRandomColor() {
-  const letters = "0123456789ABCDEF";
+  const MAX_CHANNEL_VALUE = 200; // Maximum value for each color channel
   let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
+  
+  for (let i = 0; i < 3; i++) {
+    const channelValue = Math.floor(Math.random() * (MAX_CHANNEL_VALUE + 1));
+    const hex = channelValue.toString(16).padStart(2, "0"); // Convert the value to a 2-digit hexadecimal string
+    color += hex;
   }
+  
   return color;
 }
-

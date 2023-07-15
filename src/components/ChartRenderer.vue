@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Completed Product Orders</h1>
+    <h1>Employee Loan Application</h1>
     <select v-model="selected">
       <option disabled value="">Please select one</option>
       <option value="Company A">A</option>
@@ -98,6 +98,7 @@ export default {
           label: getLegendName(measure),
           data: resultSet.chartPivot().map((row) => row[measure]),
           backgroundColor: getRandomColor(),
+          
         }));
         const ctx = chartCanvas.value.getContext("2d");
         chartInstance = new Chart(ctx, {
