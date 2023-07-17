@@ -62,7 +62,7 @@
 
 	async function updateTotalAmount(selectedValue) {
 		const totalLoansQuery = await cubejsApi.load({
-			measures: ["loan.totalamount"],
+			measures: ["loan.loanamount"],
 			timeDimensions: [
 				{ dimension: "loan.applicationdate" }
 			],
@@ -128,12 +128,12 @@
 
 	async function updateChart(selectedValue) {
       const resultSet = await cubejsApi.load({
-        measures: ["loan.totalamount"],
+        measures: ["loan.loanamount"],
         timeDimensions: [
           {
             dimension: "loan.applicationdate",
             granularity: "month",
-            dateRange: "Last year",
+            dateRange: "This year",
           },
         ],
         order: {
@@ -170,7 +170,7 @@
         }));
         const ctx = chartCanvas.value.getContext("2d");
         chartInstance = new Chart(ctx, {
-          type: "bar",
+          type: "line",
           data: {
             labels: resultSet.chartPivot().map((row) => row.x),
             datasets: datasets,
