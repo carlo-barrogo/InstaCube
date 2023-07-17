@@ -154,7 +154,7 @@
         chartInstance.data.datasets = resultSet
           .pivotQuery()
           .measures.map((measure) => ({
-            label: getLegendName(measure),
+            label: "Total Amount",
             data: resultSet.chartPivot().map((row) => row[measure]),
             backgroundColor: getRandomColor(),
           }));
